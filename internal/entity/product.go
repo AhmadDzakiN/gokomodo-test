@@ -1,19 +1,15 @@
 package entity
 
-type Product struct {
-	ID          string `gorm:"column:id;type:uuid;default:uuid_generate_v4();primaryKey"`
-	Name        string `gorm:"column:name;not null"`
-	Description string `gorm:"column:description;not null"`
-	Price       int64  `gorm:"column:price;not null"`
-	SellerID    string `gorm:"column:seller_id;not null"`
-}
+import "time"
 
-type GetProductListParams struct {
-	LastValue uint64 `json:"-"`
-	NextToken string `json:"-"`
-	Limit     int    `json:"-"`
-	Query     string `json:"-"`
-	SellerID  string `json:"-"`
+type Product struct {
+	ID          uint64    `gorm:"column:id;primaryKey"`
+	Name        string    `gorm:"column:name;not null"`
+	Description string    `gorm:"column:description;not null"`
+	Price       int64     `gorm:"column:price;not null"`
+	SellerID    string    `gorm:"column:seller_id;not null"`
+	CreatedAt   time.Time `gorm:"column:created_at;default:CURRENT_TIMESTAMP;not null"`
+	UpdatedAt   time.Time `gorm:"column:updated_at;default:CURRENT_TIMESTAMP;not null"`
 }
 
 func (p *Product) TableName() string {

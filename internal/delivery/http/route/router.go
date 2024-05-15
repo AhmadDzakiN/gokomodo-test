@@ -3,10 +3,16 @@ package route
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"gokomodo-assignment/internal/delivery/http/handler"
 	"net/http"
 )
 
-func Router() (router *gin.Engine) {
+type RouteConfig struct {
+	SellerHandler *handler.SellerHandler
+	BuyerHandler  *handler.BuyerHandler
+}
+
+func Router(cfg *RouteConfig) (router *gin.Engine) {
 	corsConfig := cors.Config{
 		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
 		AllowCredentials: true,
@@ -17,9 +23,12 @@ func Router() (router *gin.Engine) {
 	}
 
 	corsOpt := cors.New(corsConfig)
+	gin.SetMode(gin.TestMode)
 	router = gin.Default()
 	router.Use(corsOpt)
 	router.Use(gin.Recovery())
+	router.ForwardedByClientIP = true
+	router.SetTrustedProxies([]string{"127.0.0.1", "192.168.1.2", "10.0.0.0/8"})
 
 	// Ping test
 	router.GET("/ping", func(c *gin.Context) {
@@ -28,19 +37,19 @@ func Router() (router *gin.Engine) {
 
 	seller := router.Group("/seller")
 	{
-		seller.POST("/login")
-		seller.GET("/products")
-		seller.POST("/product")
-		seller.GET("/orders")
-		seller.PUT("/order")
+		seller.POST("/login", cfg.SellerHandler.Login)
+		seller.GET("/products", cfg.SellerHandler.GetProductList)
+		seller.POST("/product", cfg.SellerHandler.CreateProduct)
+		seller.GET("/orders", cfg.SellerHandler.GetOrderList)
+		seller.PUT("/order", cfg.SellerHandler.AcceptOrder)
 	}
 
 	buyer := router.Group("/buyer")
 	{
-		buyer.POST("/login")
-		buyer.GET("/products")
-		buyer.POST("/create")
-		buyer.GET("/orders")
+		buyer.POST("/login", cfg.BuyerHandler.Login)
+		buyer.GET("/products", cfg.BuyerHandler.GetProductList)
+		buyer.POST("/create", cfg.BuyerHandler.CreateOrder)
+		buyer.GET("/orders", cfg.BuyerHandler.GetOrderList)
 	}
 
 	return

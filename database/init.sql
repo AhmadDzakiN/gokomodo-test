@@ -3,7 +3,9 @@ CREATE TABLE IF NOT EXISTS buyers (
     email varchar(255) NOT NULL,
     password varchar(255) NOT NULL,
     name varchar(255) NOT NULL,
-    shipping_address text NOT NULl
+    shipping_address text NOT NULl,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS sellers (
@@ -11,29 +13,35 @@ CREATE TABLE IF NOT EXISTS sellers (
     email varchar(255) NOT NULL,
     password varchar(255) NOT NULL,
     name varchar(255) NOT NULL,
-    pickup_address text NOT NULL
+    pickup_address text NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS products (
-    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name varchar(255) NOT NULL,
     description text NOT NULL,
     price BIGINT NOT NULL,
     seller_id uuid NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     FOREIGN KEY (seller_id) REFERENCES sellers(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS orders (
-    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     buyer_id uuid NOT NULL,
     seller_id uuid NOT NULL,
     source_address text NOT NULL,
     destination_address text NOT NULL,
-    items UUID NOT NULL,
+    items BIGINT NOT NULL,
     quantity INT NOT NULL,
     price BIGINT NOT NULL,
     total_price BIGINT NOT NULL,
     status varchar(100) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     FOREIGN KEY (seller_id) REFERENCES sellers(id) ON DELETE CASCADE,
     FOREIGN KEY (buyer_id) REFERENCES buyers(id) ON DELETE CASCADE,
     FOREIGN KEY (items) REFERENCES products(id) ON DELETE CASCADE
