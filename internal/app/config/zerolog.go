@@ -24,7 +24,6 @@ func NewLogger(cfg *viper.Viper) (zrLog zerolog.Logger) {
 
 		zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	default:
-
 		zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	}
 

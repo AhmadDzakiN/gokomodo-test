@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gokomodo-assignment/internal/config"
+	"gokomodo-assignment/internal/app/config"
 )
 
 func main() {

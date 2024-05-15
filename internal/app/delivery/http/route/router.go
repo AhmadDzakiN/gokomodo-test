@@ -3,7 +3,7 @@ package route
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"gokomodo-assignment/internal/delivery/http/handler"
+	"gokomodo-assignment/internal/app/delivery/http/handler"
 	"net/http"
 )
 
@@ -39,16 +39,16 @@ func Router(cfg *RouteConfig) (router *gin.Engine) {
 	{
 		seller.POST("/login", cfg.SellerHandler.Login)
 		seller.GET("/products", cfg.SellerHandler.GetProductList)
-		seller.POST("/product", cfg.SellerHandler.CreateProduct)
+		seller.POST("/products/create", cfg.SellerHandler.CreateProduct)
 		seller.GET("/orders", cfg.SellerHandler.GetOrderList)
-		seller.PUT("/order", cfg.SellerHandler.AcceptOrder)
+		seller.PUT("/orders", cfg.SellerHandler.AcceptOrder)
 	}
 
 	buyer := router.Group("/buyer")
 	{
 		buyer.POST("/login", cfg.BuyerHandler.Login)
 		buyer.GET("/products", cfg.BuyerHandler.GetProductList)
-		buyer.POST("/create", cfg.BuyerHandler.CreateOrder)
+		buyer.POST("/orders/create", cfg.BuyerHandler.CreateOrder)
 		buyer.GET("/orders", cfg.BuyerHandler.GetOrderList)
 	}
 

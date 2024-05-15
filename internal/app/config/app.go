@@ -4,10 +4,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
-	"gokomodo-assignment/internal/delivery/http/handler"
-	"gokomodo-assignment/internal/delivery/http/route"
-	"gokomodo-assignment/internal/repository"
-	"gokomodo-assignment/internal/service"
+	"gokomodo-assignment/internal/app/delivery/http/handler"
+	"gokomodo-assignment/internal/app/delivery/http/route"
+	"gokomodo-assignment/internal/app/repository"
+	"gokomodo-assignment/internal/app/service"
 	"gorm.io/gorm"
 )
 
@@ -23,7 +23,7 @@ func BootstrapApp(config *BootstrapAppConfig) (app *gin.Engine) {
 	productRepository := repository.NewProductRepository(config.DB)
 	sellerRepository := repository.NewSellerRepository(config.DB)
 
-	buyerService := service.NewBuyerService(config.Validator, buyerRepository, productRepository, orderRepository)
+	buyerService := service.NewBuyerService(config.Validator, buyerRepository, productRepository, orderRepository, sellerRepository)
 	sellerService := service.NewSellerService(config.Validator, sellerRepository, productRepository, orderRepository)
 
 	buyerHandler := handler.NewBuyerHandler(buyerService)

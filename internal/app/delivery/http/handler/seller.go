@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"gokomodo-assignment/internal/service"
+	"gokomodo-assignment/internal/app/service"
 	"net/http"
 )
 

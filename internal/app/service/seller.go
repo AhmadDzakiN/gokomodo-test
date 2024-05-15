@@ -3,8 +3,8 @@ package service
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"gokomodo-assignment/internal/payloads"
-	"gokomodo-assignment/internal/repository"
+	"gokomodo-assignment/internal/app/payloads"
+	"gokomodo-assignment/internal/app/repository"
 )
 
 type SellerService struct {
