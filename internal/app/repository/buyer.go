@@ -11,8 +11,8 @@ type BuyerRepository struct {
 }
 
 type IBuyerRepository interface {
-	Login(ctx *gin.Context, buyer entity.Buyer) (err error)
 	GetByID(ctx *gin.Context, id string) (buyer entity.Buyer, err error)
+	GetByEmail(ctx *gin.Context, email string) (buyer entity.Buyer, err error)
 }
 
 func NewBuyerRepository(db *gorm.DB) *BuyerRepository {
@@ -21,12 +21,18 @@ func NewBuyerRepository(db *gorm.DB) *BuyerRepository {
 	}
 }
 
-func (b *BuyerRepository) Login(ctx *gin.Context, buyer entity.Buyer) (err error) {
+func (b *BuyerRepository) GetByID(ctx *gin.Context, id string) (buyer entity.Buyer, err error) {
+	query := b.db.WithContext(ctx).First(&buyer, "id = ?", id)
+	if query.Error != nil {
+		err = query.Error
+		return
+	}
+
 	return
 }
 
-func (b *BuyerRepository) GetByID(ctx *gin.Context, id string) (buyer entity.Buyer, err error) {
-	query := b.db.WithContext(ctx).First(&buyer, "id = ?", id)
+func (s *BuyerRepository) GetByEmail(ctx *gin.Context, email string) (buyer entity.Buyer, err error) {
+	query := s.db.WithContext(ctx).First(&buyer, "email = ?", email)
 	if query.Error != nil {
 		err = query.Error
 		return

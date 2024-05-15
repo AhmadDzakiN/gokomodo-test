@@ -9,6 +9,7 @@ import (
 	"gokomodo-assignment/internal/app/entity"
 	"gokomodo-assignment/internal/app/payloads"
 	"gokomodo-assignment/internal/app/repository"
+	"gokomodo-assignment/internal/pkg/jwt"
 	"gokomodo-assignment/internal/pkg/pagination"
 	"gorm.io/gorm"
 	"net/http"
@@ -25,7 +26,7 @@ type BuyerService struct {
 
 // modify the responses & requests
 type IBuyerService interface {
-	Login(ctx *gin.Context, request payloads.BuyerLoginRequest) (err error)
+	Login(ctx *gin.Context) (err error)
 	GetProductList(ctx *gin.Context) (err error)
 	CreateOrder(ctx *gin.Context) (err error)
 	GetOrderList(ctx *gin.Context) (err error)
@@ -42,7 +43,46 @@ func NewBuyerService(validator *validator.Validate, buyerRepo *repository.BuyerR
 	}
 }
 
-func (b *BuyerService) Login(ctx *gin.Context, request payloads.BuyerLoginRequest) (err error) {
+func (b *BuyerService) Login(ctx *gin.Context) (err error) {
+	var request payloads.BuyerLoginRequest
+	if err = ctx.ShouldBindJSON(&request); err != nil {
+		log.Err(err).Msg("Invalid request format")
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "status_code": http.StatusBadRequest, "error": err.Error()})
+		return
+	}
+
+	buyer, err := b.BuyerRepo.GetByEmail(ctx, request.Email)
+	if err != nil {
+		log.Err(err).Msgf("Failed to get Buyer by Email %s", request.Email)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			ctx.JSON(http.StatusNotFound, gin.H{"status": "error", "status_code": http.StatusNotFound, "error": err.Error()})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "status_code": http.StatusInternalServerError, "error": err.Error()})
+		return
+	}
+
+	//err = bcrypt.CompareHashAndPassword([]byte(buyer.Password), []byte(request.Password))
+	//if err != nil {
+	//	log.Err(err).Msgf("Invalid or wrong password")
+	//	ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "status_code": http.StatusBadRequest, "error": "Invalid or wrong password"})
+	//	return
+	//}
+
+	token, err := jwt.CreateToken(buyer.ID, buyer.Name, constant.SellerRole)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "status_code": http.StatusBadRequest, "error": "Failed to create Buyer token"})
+		return
+	}
+
+	response := payloads.BuyerLoginResponse{
+		Email: buyer.Email,
+		Name:  buyer.Name,
+		Token: token,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "status_code": http.StatusOK, "data": response})
+
 	return
 }
 

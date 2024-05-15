@@ -3,12 +3,15 @@ package service
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"gokomodo-assignment/internal/app/constant"
 	"gokomodo-assignment/internal/app/entity"
 	"gokomodo-assignment/internal/app/payloads"
 	"gokomodo-assignment/internal/app/repository"
+	"gokomodo-assignment/internal/pkg/jwt"
 	"gokomodo-assignment/internal/pkg/pagination"
+	"gorm.io/gorm"
 	"net/http"
 	"strconv"
 	"strings"
@@ -23,7 +26,7 @@ type SellerService struct {
 
 // modify the responses & requests
 type ISellerService interface {
-	Login(ctx *gin.Context, request payloads.SellerLoginRequest) (err error)
+	Login(ctx *gin.Context) (err error)
 	GetProductList(ctx *gin.Context) (err error)
 	CreateProduct(ctx *gin.Context) (err error)
 	AcceptOrder(ctx *gin.Context) (err error)
@@ -40,7 +43,45 @@ func NewSellerService(validator *validator.Validate, sellerRepo *repository.Sell
 	}
 }
 
-func (s *SellerService) Login(ctx *gin.Context, request payloads.SellerLoginRequest) (err error) {
+func (s *SellerService) Login(ctx *gin.Context) (err error) {
+	var request payloads.SellerLoginRequest
+	if err = ctx.ShouldBindJSON(&request); err != nil {
+		log.Err(err).Msg("Invalid request format")
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "status_code": http.StatusBadRequest, "error": err.Error()})
+		return
+	}
+
+	seller, err := s.SellerRepo.GetByEmail(ctx, request.Email)
+	if err != nil {
+		log.Err(err).Msgf("Failed to get Seller by Email %s", request.Email)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			ctx.JSON(http.StatusNotFound, gin.H{"status": "error", "status_code": http.StatusNotFound, "error": err.Error()})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "status_code": http.StatusInternalServerError, "error": err.Error()})
+		return
+	}
+
+	//err = bcrypt.CompareHashAndPassword([]byte(seller.Password), []byte(request.Password))
+	//if err != nil {
+	//	log.Err(err).Msgf("Invalid or wrong password")
+	//	ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "status_code": http.StatusBadRequest, "error": "Invalid or wrong password"})
+	//	return
+	//}
+
+	token, err := jwt.CreateToken(seller.ID, seller.Name, constant.SellerRole)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "status_code": http.StatusBadRequest, "error": "Failed to create Seller token"})
+		return
+	}
+
+	response := payloads.SellerLoginResponse{
+		Email: seller.Email,
+		Name:  seller.Name,
+		Token: token,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "status_code": http.StatusOK, "data": response})
 	return
 }
 

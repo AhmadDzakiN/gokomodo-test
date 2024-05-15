@@ -14,7 +14,7 @@ func NewBuyerHandler(svc *service.BuyerService) *BuyerHandler {
 }
 
 func (b *BuyerHandler) Login(ctx *gin.Context) {
-
+	b.BuyerService.Login(ctx)
 }
 
 func (b *BuyerHandler) GetProductList(ctx *gin.Context) {

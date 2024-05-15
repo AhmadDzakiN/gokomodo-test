@@ -36,3 +36,15 @@ type CreateProductResponse struct {
 	Price       uint64 `json:"price"`
 	SellerID    string `json:"seller_id"`
 }
+
+type SellerLoginResponse struct {
+	Email string `json:"email"`
+	Name  string `json:"name"`
+	Token string `json:"token"`
+}
+
+type BuyerLoginResponse struct {
+	Email string `json:"email"`
+	Name  string `json:"name"`
+	Token string `json:"token"`
+}

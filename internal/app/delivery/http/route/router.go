@@ -3,7 +3,9 @@ package route
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"gokomodo-assignment/internal/app/constant"
 	"gokomodo-assignment/internal/app/delivery/http/handler"
+	"gokomodo-assignment/internal/app/delivery/middleware"
 	"net/http"
 )
 
@@ -36,8 +38,9 @@ func Router(cfg *RouteConfig) (router *gin.Engine) {
 	})
 
 	seller := router.Group("/seller")
+	seller.POST("/login", cfg.SellerHandler.Login)
+	seller.Use(middleware.JWTAuthCheck(), middleware.RoleAuthorization(constant.SellerRole))
 	{
-		seller.POST("/login", cfg.SellerHandler.Login)
 		seller.GET("/products", cfg.SellerHandler.GetProductList)
 		seller.POST("/products", cfg.SellerHandler.CreateProduct)
 		seller.GET("/orders", cfg.SellerHandler.GetOrderList)
@@ -45,8 +48,9 @@ func Router(cfg *RouteConfig) (router *gin.Engine) {
 	}
 
 	buyer := router.Group("/buyer")
+	buyer.POST("/login", cfg.BuyerHandler.Login)
+	buyer.Use(middleware.JWTAuthCheck(), middleware.RoleAuthorization(constant.BuyerRole))
 	{
-		buyer.POST("/login", cfg.BuyerHandler.Login)
 		buyer.GET("/products", cfg.BuyerHandler.GetProductList)
 		buyer.POST("/orders", cfg.BuyerHandler.CreateOrder)
 		buyer.GET("/orders", cfg.BuyerHandler.GetOrderList)

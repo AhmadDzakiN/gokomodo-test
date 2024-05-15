@@ -3,7 +3,6 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"gokomodo-assignment/internal/app/service"
-	"net/http"
 )
 
 type SellerHandler struct {
@@ -15,7 +14,7 @@ func NewSellerHandler(svc *service.SellerService) *SellerHandler {
 }
 
 func (s *SellerHandler) Login(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"user": "ok"}})
+	s.SellerService.Login(ctx)
 }
 
 func (s *SellerHandler) GetProductList(ctx *gin.Context) {
