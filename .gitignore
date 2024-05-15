@@ -1,0 +1,4 @@
+.idea
+params/.env
+*.DS_Store
+gokomodo-test
