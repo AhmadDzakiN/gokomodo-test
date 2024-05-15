@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
 	"gokomodo-assignment/internal/app/constant"
 	"gokomodo-assignment/internal/app/entity"
 	"gokomodo-assignment/internal/app/payloads"
@@ -14,7 +15,7 @@ type OrderRepository struct {
 }
 
 type IOrderRepository interface {
-	Accept(ctx *gin.Context) (err error)
+	Accept(ctx *gin.Context, id uint64, sellerID string) (err error)
 	GetList(ctx *gin.Context, params payloads.GetOrderListParams) (orders []entity.Order, err error)
 	Create(ctx *gin.Context, order *entity.Order) (err error)
 }
@@ -25,7 +26,19 @@ func NewOrderRepository(db *gorm.DB) *OrderRepository {
 	}
 }
 
-func (o *OrderRepository) Accept(ctx *gin.Context) (err error) {
+func (o *OrderRepository) Accept(ctx *gin.Context, id uint64, sellerID string) (err error) {
+	query := o.db.WithContext(ctx).Table("orders").Where("id = ? AND seller_id = ?", id, sellerID).
+		Update("status", constant.OrderStatusAccepted)
+	if query.Error != nil {
+		err = query.Error
+		return
+	}
+
+	if query.RowsAffected < 1 {
+		err = errors.New("Update operation failed because rows affected is 0")
+		return
+	}
+
 	return
 }
 
@@ -57,9 +70,15 @@ func (o *OrderRepository) GetList(ctx *gin.Context, params payloads.GetOrderList
 
 func (o *OrderRepository) Create(ctx *gin.Context, order *entity.Order) (err error) {
 	query := o.db.WithContext(ctx).Create(order)
-	if query.Error != nil || query.RowsAffected < 1 {
+	if query.Error != nil {
 		err = query.Error
 		return
 	}
+
+	if query.RowsAffected < 1 {
+		err = errors.New("Insert operation failed because rows affected is 0")
+		return
+	}
+
 	return
 }

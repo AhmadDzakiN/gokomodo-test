@@ -28,3 +28,11 @@ type CreateOrderResponse struct {
 	Price      uint64 `json:"price"`
 	TotalPrice uint64 `json:"total_price"`
 }
+
+type CreateProductResponse struct {
+	ID          uint64 `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Price       uint64 `json:"price"`
+	SellerID    string `json:"seller_id"`
+}

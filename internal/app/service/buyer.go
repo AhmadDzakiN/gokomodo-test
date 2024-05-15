@@ -117,7 +117,7 @@ func (b *BuyerService) CreateOrder(ctx *gin.Context) (err error) {
 		return
 	}
 
-	order := entity.Order{
+	newOrder := entity.Order{
 		BuyerID:            buyer.ID, //get from jwt
 		SellerID:           product.SellerID,
 		SourceAddress:      seller.PickupAddress,
@@ -129,18 +129,19 @@ func (b *BuyerService) CreateOrder(ctx *gin.Context) (err error) {
 		Status:             constant.OrderStatusPending,
 	}
 
-	err = b.OrderRepo.Create(ctx, &order)
+	err = b.OrderRepo.Create(ctx, &newOrder)
 	if err != nil {
+		log.Err(err).Msgf("Failed to create new Order for Buyer %s", buyer.ID)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "status_code": http.StatusInternalServerError, "error": err.Error()})
 		return
 	}
 
 	response := payloads.CreateOrderResponse{
-		ID:         order.ID,
-		Items:      order.Items,
-		Quantity:   order.Quantity,
-		Price:      order.Price,
-		TotalPrice: order.TotalPrice,
+		ID:         newOrder.ID,
+		Items:      newOrder.Items,
+		Quantity:   newOrder.Quantity,
+		Price:      newOrder.Price,
+		TotalPrice: newOrder.TotalPrice,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "status_code": http.StatusOK, "data": response})
