@@ -15,7 +15,7 @@ type IBuyerRepository interface {
 	GetByEmail(ctx *gin.Context, email string) (buyer entity.Buyer, err error)
 }
 
-func NewBuyerRepository(db *gorm.DB) *BuyerRepository {
+func NewBuyerRepository(db *gorm.DB) IBuyerRepository {
 	return &BuyerRepository{
 		db: db,
 	}

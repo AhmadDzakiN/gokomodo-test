@@ -19,7 +19,7 @@ type IProductRepository interface {
 	GetByID(ctx *gin.Context, id uint64) (product entity.Product, err error)
 }
 
-func NewProductRepository(db *gorm.DB) *ProductRepository {
+func NewProductRepository(db *gorm.DB) IProductRepository {
 	return &ProductRepository{
 		db: db,
 	}

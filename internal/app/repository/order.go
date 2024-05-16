@@ -20,7 +20,7 @@ type IOrderRepository interface {
 	Create(ctx *gin.Context, order *entity.Order) (err error)
 }
 
-func NewOrderRepository(db *gorm.DB) *OrderRepository {
+func NewOrderRepository(db *gorm.DB) IOrderRepository {
 	return &OrderRepository{
 		db: db,
 	}
