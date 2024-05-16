@@ -18,10 +18,10 @@ import (
 
 type BuyerService struct {
 	Validator   *validator.Validate
-	BuyerRepo   *repository.BuyerRepository
-	ProductRepo *repository.ProductRepository
-	OrderRepo   *repository.OrderRepository
-	SellerRepo  *repository.SellerRepository
+	BuyerRepo   repository.IBuyerRepository
+	ProductRepo repository.IProductRepository
+	OrderRepo   repository.IOrderRepository
+	SellerRepo  repository.ISellerRepository
 }
 
 type IBuyerService interface {
@@ -31,8 +31,8 @@ type IBuyerService interface {
 	GetOrderList(ctx *gin.Context)
 }
 
-func NewBuyerService(validator *validator.Validate, buyerRepo *repository.BuyerRepository,
-	productRepo *repository.ProductRepository, orderRepo *repository.OrderRepository, sellerRepo *repository.SellerRepository) *BuyerService {
+func NewBuyerService(validator *validator.Validate, buyerRepo repository.IBuyerRepository,
+	productRepo repository.IProductRepository, orderRepo repository.IOrderRepository, sellerRepo repository.ISellerRepository) *BuyerService {
 	return &BuyerService{
 		Validator:   validator,
 		BuyerRepo:   buyerRepo,
@@ -218,7 +218,7 @@ func (b *BuyerService) GetOrderList(ctx *gin.Context) {
 	tokenClaims, err := jwt.GetTokenClaims(ctx)
 	if err != nil {
 		log.Err(err).Msg("Invalid user token")
-		ctx.JSON(http.StatusForbidden, gin.H{"status": "error", "status_code": http.StatusUnauthorized, "error": "Access forbidden"})
+		ctx.JSON(http.StatusForbidden, gin.H{"status": "error", "status_code": http.StatusForbidden, "error": "Access forbidden"})
 		ctx.Abort()
 		return
 	}

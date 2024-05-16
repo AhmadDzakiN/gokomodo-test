@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 	"gokomodo-assignment/internal/pkg/jwt"
 	"net/http"
 	"strings"
@@ -22,6 +23,7 @@ func JWTAuthCheck() gin.HandlerFunc {
 		}
 
 		if token == "" {
+			log.Error().Msg("Empty token")
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "error", "status_code": http.StatusUnauthorized, "error": "Not in the login session, please login again"})
 			ctx.Abort()
 			return
@@ -29,6 +31,7 @@ func JWTAuthCheck() gin.HandlerFunc {
 
 		data, err := jwt.ValidateToken(token)
 		if err != nil {
+			log.Err(err).Msg("Error while validate token")
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "error", "status_code": http.StatusUnauthorized, "error": "Failed to validate token"})
 			ctx.Abort()
 			return
@@ -44,6 +47,7 @@ func RoleAuthorization(role string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		claims, _ := ctx.Get("token")
 		if claims == nil {
+			log.Error().Msg("Empty token claims")
 			ctx.JSON(http.StatusUnauthorized, gin.H{"status": "error", "status_code": http.StatusUnauthorized, "error": "No token claims found"})
 			ctx.Abort()
 			return
@@ -51,7 +55,8 @@ func RoleAuthorization(role string) gin.HandlerFunc {
 
 		customClaims, ok := claims.(jwt.JWTCustomClaims)
 		if !ok || customClaims.Role != role {
-			ctx.JSON(http.StatusForbidden, gin.H{"status": "error", "status_code": http.StatusUnauthorized, "error": "Access forbidden"})
+			log.Error().Msg("Not authorize role")
+			ctx.JSON(http.StatusForbidden, gin.H{"status": "error", "status_code": http.StatusForbidden, "error": "Access forbidden"})
 			ctx.Abort()
 			return
 		}

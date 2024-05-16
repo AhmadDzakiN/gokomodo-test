@@ -19,9 +19,9 @@ import (
 
 type SellerService struct {
 	Validator   *validator.Validate
-	SellerRepo  *repository.SellerRepository
-	ProductRepo *repository.ProductRepository
-	OrderRepo   *repository.OrderRepository
+	SellerRepo  repository.ISellerRepository
+	ProductRepo repository.IProductRepository
+	OrderRepo   repository.IOrderRepository
 }
 
 type ISellerService interface {
@@ -32,8 +32,8 @@ type ISellerService interface {
 	GetOrderList(ctx *gin.Context)
 }
 
-func NewSellerService(validator *validator.Validate, sellerRepo *repository.SellerRepository,
-	productRepo *repository.ProductRepository, orderRepo *repository.OrderRepository) *SellerService {
+func NewSellerService(validator *validator.Validate, sellerRepo repository.ISellerRepository,
+	productRepo repository.IProductRepository, orderRepo repository.IOrderRepository) *SellerService {
 	return &SellerService{
 		Validator:   validator,
 		SellerRepo:  sellerRepo,
@@ -100,7 +100,7 @@ func (s *SellerService) GetProductList(ctx *gin.Context) {
 	tokenClaims, err := jwt.GetTokenClaims(ctx)
 	if err != nil {
 		log.Err(err).Msg("Invalid user token")
-		ctx.JSON(http.StatusForbidden, gin.H{"status": "error", "status_code": http.StatusUnauthorized, "error": "Access forbidden"})
+		ctx.JSON(http.StatusForbidden, gin.H{"status": "error", "status_code": http.StatusForbidden, "error": "Access forbidden"})
 		ctx.Abort()
 		return
 	}
@@ -189,7 +189,7 @@ func (s *SellerService) AcceptOrder(ctx *gin.Context) {
 	tokenClaims, err := jwt.GetTokenClaims(ctx)
 	if err != nil {
 		log.Err(err).Msg("Invalid user token")
-		ctx.JSON(http.StatusForbidden, gin.H{"status": "error", "status_code": http.StatusUnauthorized, "error": "Access forbidden"})
+		ctx.JSON(http.StatusForbidden, gin.H{"status": "error", "status_code": http.StatusForbidden, "error": "Access forbidden"})
 		ctx.Abort()
 		return
 	}
@@ -215,7 +215,7 @@ func (s *SellerService) GetOrderList(ctx *gin.Context) {
 	tokenClaims, err := jwt.GetTokenClaims(ctx)
 	if err != nil {
 		log.Err(err).Msg("Invalid user token")
-		ctx.JSON(http.StatusForbidden, gin.H{"status": "error", "status_code": http.StatusUnauthorized, "error": "Access forbidden"})
+		ctx.JSON(http.StatusForbidden, gin.H{"status": "error", "status_code": http.StatusForbidden, "error": "Access forbidden"})
 		ctx.Abort()
 		return
 	}

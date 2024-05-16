@@ -6,7 +6,7 @@ import (
 )
 
 type SellerHandler struct {
-	SellerService *service.SellerService
+	SellerService service.ISellerService
 }
 
 func NewSellerHandler(svc *service.SellerService) *SellerHandler {
