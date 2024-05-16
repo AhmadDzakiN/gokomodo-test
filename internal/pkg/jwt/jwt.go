@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
@@ -36,7 +37,8 @@ func CreateToken(userID, name, role string) (token string, err error) {
 	return
 }
 
-func ValidateToken(token, secretKey string) (data interface{}, err error) {
+func ValidateToken(token string) (data interface{}, err error) {
+	secretKey := os.Getenv("JWT_SECRET_KEY")
 	extractedToken, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("There is an error in token parsing")
@@ -65,6 +67,17 @@ func ValidateToken(token, secretKey string) (data interface{}, err error) {
 		UserID: claims["user_id"].(string),
 		Name:   claims["name"].(string),
 		Role:   claims["role"].(string),
+	}
+
+	return
+}
+
+func GetTokenClaims(ctx *gin.Context) (claims JWTCustomClaims, err error) {
+	token, _ := ctx.Get("token")
+	claims, ok := token.(JWTCustomClaims)
+	if !ok || token == nil {
+		err = errors.New("Invalid token")
+		return
 	}
 
 	return

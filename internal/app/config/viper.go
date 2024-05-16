@@ -25,7 +25,3 @@ func NewViperConfig() *viper.Viper {
 
 	return v
 }
-
-func AppConfig() *viper.Viper {
-	return NewViperConfig()
-}

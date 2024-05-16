@@ -24,13 +24,12 @@ type SellerService struct {
 	OrderRepo   *repository.OrderRepository
 }
 
-// modify the responses & requests
 type ISellerService interface {
-	Login(ctx *gin.Context) (err error)
-	GetProductList(ctx *gin.Context) (err error)
-	CreateProduct(ctx *gin.Context) (err error)
-	AcceptOrder(ctx *gin.Context) (err error)
-	GetOrderList(ctx *gin.Context) (err error)
+	Login(ctx *gin.Context)
+	GetProductList(ctx *gin.Context)
+	CreateProduct(ctx *gin.Context)
+	AcceptOrder(ctx *gin.Context)
+	GetOrderList(ctx *gin.Context)
 }
 
 func NewSellerService(validator *validator.Validate, sellerRepo *repository.SellerRepository,
@@ -43,11 +42,17 @@ func NewSellerService(validator *validator.Validate, sellerRepo *repository.Sell
 	}
 }
 
-func (s *SellerService) Login(ctx *gin.Context) (err error) {
+func (s *SellerService) Login(ctx *gin.Context) {
 	var request payloads.SellerLoginRequest
-	if err = ctx.ShouldBindJSON(&request); err != nil {
+	if err := ctx.ShouldBindJSON(&request); err != nil {
 		log.Err(err).Msg("Invalid request format")
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "status_code": http.StatusBadRequest, "error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "status_code": http.StatusBadRequest, "error": "Empty or invalid request"})
+		return
+	}
+
+	if err := s.Validator.Struct(request); err != nil {
+		log.Err(err).Msg("Empty or invalid request")
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "status_code": http.StatusBadRequest, "error": "Empty or invalid request"})
 		return
 	}
 
@@ -55,10 +60,10 @@ func (s *SellerService) Login(ctx *gin.Context) (err error) {
 	if err != nil {
 		log.Err(err).Msgf("Failed to get Seller by Email %s", request.Email)
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			ctx.JSON(http.StatusNotFound, gin.H{"status": "error", "status_code": http.StatusNotFound, "error": err.Error()})
+			ctx.JSON(http.StatusNotFound, gin.H{"status": "error", "status_code": http.StatusNotFound, "error": "Seller not found"})
 			return
 		}
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "status_code": http.StatusInternalServerError, "error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "status_code": http.StatusInternalServerError, "error": "Ups, something wrong with the server. Please try again later"})
 		return
 	}
 
@@ -85,18 +90,26 @@ func (s *SellerService) Login(ctx *gin.Context) (err error) {
 	return
 }
 
-func (s *SellerService) GetProductList(ctx *gin.Context) (err error) {
+func (s *SellerService) GetProductList(ctx *gin.Context) {
 	nextToken := strings.TrimSpace(ctx.Query("next"))
 	params := payloads.GetProductListParams{
 		LastValue: pagination.ParseGetListPageToken(nextToken),
 		Limit:     constant.GetItemListLimit,
-		SellerID:  "802988d9-054f-4a96-af17-bb8bffdea411", // change this to get from jwt
 	}
 
+	tokenClaims, err := jwt.GetTokenClaims(ctx)
+	if err != nil {
+		log.Err(err).Msg("Invalid user token")
+		ctx.JSON(http.StatusForbidden, gin.H{"status": "error", "status_code": http.StatusUnauthorized, "error": "Access forbidden"})
+		ctx.Abort()
+		return
+	}
+
+	params.SellerID = tokenClaims.UserID
 	productList, err := s.ProductRepo.GetList(ctx, params)
 	if err != nil {
 		log.Err(err).Msgf("Failed to get Product List")
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "status_code": http.StatusInternalServerError, "error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "status_code": http.StatusInternalServerError, "error": "Ups, something wrong with the server. Please try again later"})
 		return
 	}
 
@@ -116,11 +129,17 @@ func (s *SellerService) GetProductList(ctx *gin.Context) (err error) {
 	return
 }
 
-func (s *SellerService) CreateProduct(ctx *gin.Context) (err error) {
+func (s *SellerService) CreateProduct(ctx *gin.Context) {
 	var request payloads.CreateProductRequest
-	if err = ctx.ShouldBindJSON(&request); err != nil {
-		log.Err(err).Msg("Invalid request format")
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "status_code": http.StatusBadRequest, "error": err.Error()})
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		log.Err(err).Msg("Empty or invalid request")
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "status_code": http.StatusBadRequest, "error": "Empty or invalid request"})
+		return
+	}
+
+	if err := s.Validator.Struct(request); err != nil {
+		log.Err(err).Msg("Empty or invalid request")
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "status_code": http.StatusBadRequest, "error": "Empty or invalid request"})
 		return
 	}
 
@@ -128,13 +147,21 @@ func (s *SellerService) CreateProduct(ctx *gin.Context) (err error) {
 		Name:        request.Name,
 		Description: request.Description,
 		Price:       request.Price,
-		SellerID:    "802988d9-054f-4a96-af17-bb8bffdea411", //get from jwt
 	}
 
+	tokenClaims, err := jwt.GetTokenClaims(ctx)
+	if err != nil {
+		log.Err(err).Msg("Invalid user token")
+		ctx.JSON(http.StatusForbidden, gin.H{"status": "error", "status_code": http.StatusUnauthorized, "error": "Access forbidden"})
+		ctx.Abort()
+		return
+	}
+
+	newProduct.SellerID = tokenClaims.UserID
 	err = s.ProductRepo.Create(ctx, &newProduct)
 	if err != nil {
-		log.Err(err).Msgf("Failed to create new Product for Seller %s", "802988d9-054f-4a96-af17-bb8bffdea411") //get from jWT
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "status_code": http.StatusInternalServerError, "error": err.Error()})
+		log.Err(err).Msgf("Failed to create new Product for Seller %s", newProduct.SellerID)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "status_code": http.StatusInternalServerError, "error": "Ups, something wrong with the server. Please try again later"})
 		return
 	}
 
@@ -143,26 +170,34 @@ func (s *SellerService) CreateProduct(ctx *gin.Context) (err error) {
 		Name:        newProduct.Name,
 		Description: newProduct.Description,
 		Price:       newProduct.Price,
-		SellerID:    "802988d9-054f-4a96-af17-bb8bffdea411", //get from jwt
+		SellerID:    newProduct.SellerID,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "status_code": http.StatusOK, "data": response})
 	return
 }
 
-func (s *SellerService) AcceptOrder(ctx *gin.Context) (err error) {
+func (s *SellerService) AcceptOrder(ctx *gin.Context) {
 	orderIDStr := ctx.Param("order_id")
 	orderID, err := strconv.ParseUint(orderIDStr, 10, 64)
 	if err != nil {
-		log.Err(err).Msg("Invalid order_id format")
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "status_code": http.StatusBadRequest, "error": err.Error()})
+		log.Err(err).Msg("Empty or invalid request")
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "status_code": http.StatusBadRequest, "error": "Empty or invalid request"})
 		return
 	}
 
-	err = s.OrderRepo.Accept(ctx, orderID, "802988d9-054f-4a96-af17-bb8bffdea411") //get selleriD from JWT
+	tokenClaims, err := jwt.GetTokenClaims(ctx)
+	if err != nil {
+		log.Err(err).Msg("Invalid user token")
+		ctx.JSON(http.StatusForbidden, gin.H{"status": "error", "status_code": http.StatusUnauthorized, "error": "Access forbidden"})
+		ctx.Abort()
+		return
+	}
+
+	err = s.OrderRepo.Accept(ctx, orderID, tokenClaims.UserID)
 	if err != nil {
 		log.Err(err).Msgf("Failed to get Accept Order for ID %d", orderID)
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "status_code": http.StatusInternalServerError, "error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "status_code": http.StatusInternalServerError, "error": "Ups, something wrong with the server. Please try again later"})
 		return
 	}
 
@@ -170,19 +205,27 @@ func (s *SellerService) AcceptOrder(ctx *gin.Context) (err error) {
 	return
 }
 
-func (s *SellerService) GetOrderList(ctx *gin.Context) (err error) {
+func (s *SellerService) GetOrderList(ctx *gin.Context) {
 	nextToken := strings.TrimSpace(ctx.Query("next"))
 	params := payloads.GetOrderListParams{
 		LastValue: pagination.ParseGetListPageToken(nextToken),
 		Limit:     constant.GetItemListLimit,
 	}
 
-	//get role and userid from jwt
+	tokenClaims, err := jwt.GetTokenClaims(ctx)
+	if err != nil {
+		log.Err(err).Msg("Invalid user token")
+		ctx.JSON(http.StatusForbidden, gin.H{"status": "error", "status_code": http.StatusUnauthorized, "error": "Access forbidden"})
+		ctx.Abort()
+		return
+	}
 
+	params.UserID = tokenClaims.UserID
+	params.Role = tokenClaims.Role
 	orderList, err := s.OrderRepo.GetList(ctx, params)
 	if err != nil {
 		log.Err(err).Msg("Failed to get Order List")
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "status_code": http.StatusInternalServerError, "error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "status_code": http.StatusInternalServerError, "error": "Ups, something wrong with the server. Please try again later"})
 		return
 	}
 

@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"gokomodo-assignment/internal/pkg/jwt"
 	"net/http"
-	"os"
 	"strings"
 )
 
@@ -23,13 +22,15 @@ func JWTAuthCheck() gin.HandlerFunc {
 		}
 
 		if token == "" {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "error", "error": "Not in the login session, please login again"})
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "error", "status_code": http.StatusUnauthorized, "error": "Not in the login session, please login again"})
+			ctx.Abort()
 			return
 		}
 
-		data, err := jwt.ValidateToken(token, os.Getenv("JWT_SECRET_KEY"))
+		data, err := jwt.ValidateToken(token)
 		if err != nil {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "error", "error": err.Error()})
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "error", "status_code": http.StatusUnauthorized, "error": "Failed to validate token"})
+			ctx.Abort()
 			return
 		}
 
@@ -40,21 +41,21 @@ func JWTAuthCheck() gin.HandlerFunc {
 }
 
 func RoleAuthorization(role string) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		claims, _ := c.Get("token")
+	return func(ctx *gin.Context) {
+		claims, _ := ctx.Get("token")
 		if claims == nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "No claims found"})
-			c.Abort()
+			ctx.JSON(http.StatusUnauthorized, gin.H{"status": "error", "status_code": http.StatusUnauthorized, "error": "No token claims found"})
+			ctx.Abort()
 			return
 		}
 
 		customClaims, ok := claims.(jwt.JWTCustomClaims)
 		if !ok || customClaims.Role != role {
-			c.JSON(http.StatusForbidden, gin.H{"error": "Access forbidden"})
-			c.Abort()
+			ctx.JSON(http.StatusForbidden, gin.H{"status": "error", "status_code": http.StatusUnauthorized, "error": "Access forbidden"})
+			ctx.Abort()
 			return
 		}
 
-		c.Next()
+		ctx.Next()
 	}
 }

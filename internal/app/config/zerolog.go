@@ -16,7 +16,7 @@ func NewLogger(cfg *viper.Viper) (zrLog zerolog.Logger) {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, FormatTimestamp: func(i interface{}) string { return time.Now().Format(time.RFC3339) }})
 	}
 
-	switch AppConfig().GetString("LOG_LEVEL") {
+	switch cfg.GetString("LOG_LEVEL") {
 	case "debug":
 
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)

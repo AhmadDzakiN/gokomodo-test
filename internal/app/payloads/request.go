@@ -15,27 +15,25 @@ type GetOrderListParams struct {
 	UserID    string `json:"-"`
 }
 
-// TODO: need to specify the tag for input validation
-
 type BuyerLoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
 }
 
 type SellerLoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
 }
 
 type CreateOrderRequest struct {
-	Items      uint64 `json:"items"`
-	Quantity   uint   `json:"quantity"`
-	Price      uint64 `json:"price"`
-	TotalPrice uint64 `json:"total_price"`
+	Items      uint64 `json:"items" validate:"required,number"`
+	Quantity   uint   `json:"quantity" validate:"required,number"`
+	Price      uint64 `json:"price" validate:"required,number"`
+	TotalPrice uint64 `json:"total_price" validate:"required,number"`
 }
 
 type CreateProductRequest struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Price       uint64 `json:"price"`
+	Name        string `json:"name" validate:"required"`
+	Description string `json:"description" validate:"required"`
+	Price       uint64 `json:"price" validate:"required,number"`
 }

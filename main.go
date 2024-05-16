@@ -7,7 +7,7 @@ import (
 func main() {
 	cfg := config.NewViperConfig()
 	log := config.NewLogger(cfg)
-	validator := config.NewValidator(cfg)
+	validator := config.NewValidator()
 	db, err := config.NewPostgreDatabase(cfg)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to start, error connect to DB Postgre")
@@ -21,6 +21,7 @@ func main() {
 	})
 
 	port := cfg.GetString("APP_PORT")
-	log.Info().Msgf("Start Toko API at port %s", port)
+	appName := cfg.GetString("APP_NAME")
+	log.Info().Msgf("Start %s at port %s", appName, port)
 	app.Run(":" + port)
 }

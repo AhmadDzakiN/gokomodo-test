@@ -16,10 +16,7 @@ func ParseGetListPageToken(pageToken string) (lastValue uint64) {
 	}
 
 	sortValue := pToken[1]
-	lastValue, err := strconv.ParseUint(sortValue, 10, 64)
-	if err != nil {
-		return
-	}
+	lastValue, _ = strconv.ParseUint(sortValue, 10, 64)
 
 	return
 }
