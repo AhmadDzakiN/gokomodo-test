@@ -194,6 +194,23 @@ func (s *SellerService) AcceptOrder(ctx *gin.Context) {
 		return
 	}
 
+	order, err := s.OrderRepo.GetByID(ctx, orderID)
+	if err != nil {
+		log.Err(err).Msgf("Failed to get order by ID %s", orderID)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			ctx.JSON(http.StatusNotFound, gin.H{"status": "error", "status_code": http.StatusNotFound, "error": "Order not found"})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "status_code": http.StatusInternalServerError, "error": "Ups, something wrong with the server. Please try again later"})
+		return
+	}
+
+	if order.SellerID != tokenClaims.UserID {
+		log.Warn().Msgf("No product found for this seller. SellerID: %s", tokenClaims.UserID)
+		ctx.JSON(http.StatusNotFound, gin.H{"status": "error", "status_code": http.StatusNotFound, "error": "No product found for this seller"})
+		return
+	}
+
 	err = s.OrderRepo.Accept(ctx, orderID, tokenClaims.UserID)
 	if err != nil {
 		log.Err(err).Msgf("Failed to get Accept Order for ID %d", orderID)
@@ -201,7 +218,12 @@ func (s *SellerService) AcceptOrder(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "status_code": http.StatusOK})
+	response := payloads.AcceptOrderResponse{
+		ID:    order.ID,
+		Items: order.Items,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "status_code": http.StatusOK, "data": response})
 	return
 }
 

@@ -1,0 +1,40 @@
+version: '3.8'
+services:
+  postgresdb:
+    container_name: postgres_db
+    build:
+      context: .
+      dockerfile: postgresdb.dockerfile
+    restart: on-failure
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d db-test -U username-test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - network-test
+
+  app:
+    container_name: toko_api
+    build:
+      context: .
+      dockerfile: app.dockerfile
+    depends_on:
+      postgresdb:
+        condition: service_healthy
+    restart: on-failure
+    ports:
+      - "8000:8000"
+    networks:
+      - network-test
+
+volumes:
+  pg_data:
+
+networks:
+  network-test:
+    driver: bridge

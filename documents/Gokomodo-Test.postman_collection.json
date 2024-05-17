@@ -1,0 +1,966 @@
+{
+	"info": {
+		"_postman_id": "bb5751f0-dee3-4d9e-b047-40a31f8cf10d",
+		"name": "Gokomodo-Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5740548"
+	},
+	"item": [
+		{
+			"name": "Buyer",
+			"item": [
+				{
+					"name": "Get Product List for Buyer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/buyer/products",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"buyer",
+								"products"
+							],
+							"query": [
+								{
+									"key": "next",
+									"value": null,
+									"description": "Next Page Token",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 - Get Product List for Buyer",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8000/buyer/products",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"buyer",
+										"products"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": ""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Kipas Angin\",\n            \"description\": \"Kipas Angin Yang DIngin\",\n            \"price\": 1500000,\n            \"seller\": \"5b4f572c-b61a-446a-a1e9-81f4e362d3c3\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Mesin Cuci\",\n            \"description\": \"Mesin Cuci Yang Bersih\",\n            \"price\": 2300000,\n            \"seller\": \"802988d9-054f-4a96-af17-bb8bffdea411\"\n        },\n        {\n            \"id\": 3,\n            \"name\": \"Keyboard Mechanical\",\n            \"description\": \"Keyboard mechanical murah dengan fitur lengkap!\",\n            \"price\": 350000,\n            \"seller\": \"802988d9-054f-4a96-af17-bb8bffdea411\"\n        }\n    ],\n    \"next_token\": \"\",\n    \"status\": \"success\",\n    \"status_code\": 200\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Order List for Buyer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/buyer/orders",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"buyer",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "next",
+									"value": null,
+									"description": "Next Page Token",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 - Get Order List for Buyer",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8000/buyer/orders",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"buyer",
+										"orders"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": ""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": [\n        {\n            \"id\": 1,\n            \"buyer_id\": \"397a0a54-76a0-4eb7-b61b-ade1ee8676d9\",\n            \"seller_id\": \"5b4f572c-b61a-446a-a1e9-81f4e362d3c3\",\n            \"source_address\": \"Kota Bogor\",\n            \"destination_address\": \"Bhogor\",\n            \"items\": 1,\n            \"quantity\": 5,\n            \"price\": 2000,\n            \"total_price\": 10000,\n            \"status\": \"Accepted\"\n        },\n        {\n            \"id\": 2,\n            \"buyer_id\": \"397a0a54-76a0-4eb7-b61b-ade1ee8676d9\",\n            \"seller_id\": \"5b4f572c-b61a-446a-a1e9-81f4e362d3c3\",\n            \"source_address\": \"Bogor\",\n            \"destination_address\": \"Bhogor\",\n            \"items\": 1,\n            \"quantity\": 5,\n            \"price\": 10000,\n            \"total_price\": 50000,\n            \"status\": \"Accepted\"\n        }\n    ],\n    \"next_token\": \"\",\n    \"status\": \"success\",\n    \"status_code\": 200\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"items\": 3,\n    \"quantity\": 2,\n    \"price\": 350000,\n    \"total_price\": 700000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/buyer/orders",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"buyer",
+								"orders"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 - Create Order",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"items\": 1,\n    \"quantity\": 5,\n    \"price\": 10000,\n    \"total_price\": 50000\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/buyer/orders",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"buyer",
+										"orders"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": ""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"id\": 5,\n        \"items\": 3,\n        \"quantity\": 2,\n        \"price\": 350000,\n        \"total_price\": 700000\n    },\n    \"status\": \"success\",\n    \"status_code\": 200\n}"
+						},
+						{
+							"name": "400 - Create Order",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"items\": 1,\n    \"quantity\": 5,\n    \"price\": 10000,\n    \"total_pric\": 50000\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/buyer/orders",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"buyer",
+										"orders"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": ""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Empty or invalid request\",\n    \"status\": \"error\",\n    \"status_code\": 400\n}"
+						},
+						{
+							"name": "404 - Create Order",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"items\": 1,\n    \"quantity\": 5,\n    \"price\": 10000,\n    \"total_price\": 50000\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/buyer/orders",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"buyer",
+										"orders"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": ""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Product not found\",\n    \"status\": \"error\",\n    \"status_code\": 404\n}"
+						}
+					]
+				},
+				{
+					"name": "Login for Buyer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"testbuyer@email.com\",\n    \"password\": \"test1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/buyer/login",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"buyer",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 - Login for Buyer",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"testbuyer@email.com\",\n    \"password\": \"test1234\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/buyer/login",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"buyer",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": ""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"email\": \"testbuyer@email.com\",\n        \"name\": \"JackBuyer\",\n        \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTg0NzYyMzAsImlhdCI6MTcxNTg4NDIzMCwibmFtZSI6IkphY2tCdXllciIsInJvbGUiOiJCdXllciIsInVzZXJfaWQiOiIzOTdhMGE1NC03NmEwLTRlYjctYjYxYi1hZGUxZWU4Njc2ZDkifQ.qVODByo46i173WcngmBPR2xUg0CNMwuT3_iGTkmHbis\"\n    },\n    \"status\": \"success\",\n    \"status_code\": 200\n}"
+						},
+						{
+							"name": "400 - Login for Buyer",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"test\",\n    \"password\": \"test1234\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/buyer/login",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"buyer",
+										"login"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": ""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Empty or invalid request\",\n    \"status\": \"error\",\n    \"status_code\": 400\n}"
+						},
+						{
+							"name": "404 - Login for Buyer",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"notfound@email.com\",\n    \"password\": \"test1234\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/buyer/login",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"buyer",
+										"login"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": ""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Buyer not found\",\n    \"status\": \"error\",\n    \"status_code\": 404\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Seller",
+			"item": [
+				{
+					"name": "Get Product List for Seller",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/seller/products",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"seller",
+								"products"
+							],
+							"query": [
+								{
+									"key": "next",
+									"value": null,
+									"description": "Next Page Token",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 - Get Product List for Seller",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8000/seller/products",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"seller",
+										"products"
+									],
+									"query": [
+										{
+											"key": "next",
+											"value": null,
+											"description": "Next Page Token",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": ""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Kipas Angin\",\n            \"description\": \"Kipas Angin Yang DIngin\",\n            \"price\": 1500000,\n            \"seller\": \"5b4f572c-b61a-446a-a1e9-81f4e362d3c3\"\n        }\n    ],\n    \"next_token\": \"\",\n    \"status\": \"success\",\n    \"status_code\": 200\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Order List for Seller",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/seller/orders",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"seller",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "next",
+									"value": null,
+									"description": "Next Page Token",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 - Get Order List for Seller",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8000/seller/orders",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"seller",
+										"orders"
+									],
+									"query": [
+										{
+											"key": "next",
+											"value": null,
+											"description": "Next Page Token",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": ""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": [\n        {\n            \"id\": 1,\n            \"buyer_id\": \"397a0a54-76a0-4eb7-b61b-ade1ee8676d9\",\n            \"seller_id\": \"5b4f572c-b61a-446a-a1e9-81f4e362d3c3\",\n            \"source_address\": \"Kota Bogor\",\n            \"destination_address\": \"Bhogor\",\n            \"items\": 1,\n            \"quantity\": 5,\n            \"price\": 2000,\n            \"total_price\": 10000,\n            \"status\": \"Accepted\"\n        },\n        {\n            \"id\": 2,\n            \"buyer_id\": \"397a0a54-76a0-4eb7-b61b-ade1ee8676d9\",\n            \"seller_id\": \"5b4f572c-b61a-446a-a1e9-81f4e362d3c3\",\n            \"source_address\": \"Bogor\",\n            \"destination_address\": \"Bhogor\",\n            \"items\": 1,\n            \"quantity\": 5,\n            \"price\": 10000,\n            \"total_price\": 50000,\n            \"status\": \"Accepted\"\n        }\n    ],\n    \"next_token\": \"\",\n    \"status\": \"success\",\n    \"status_code\": 200\n}"
+						}
+					]
+				},
+				{
+					"name": "Accept Order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/seller/orders/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"seller",
+								"orders",
+								"2"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "404 - Accept Order",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "localhost:8000/seller/orders/2",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"seller",
+										"orders",
+										"2"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": ""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"No product found for this seller\",\n    \"status\": \"error\",\n    \"status_code\": 404\n}"
+						},
+						{
+							"name": "200 - Accept Order",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "localhost:8000/seller/orders/2",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"seller",
+										"orders",
+										"2"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": ""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"id\": 5,\n        \"items\": 3\n    },\n    \"status\": \"success\",\n    \"status_code\": 200\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Product for Seller",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Keyboard Mechanical\",\n    \"description\": \"Keyboard mechanical murah dengan fitur lengkap!\",\n    \"price\": 350000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/seller/products",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"seller",
+								"products"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "400 - Create Product for Seller",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Keyboard Mechanical\",\n    \"description\": \"Keyboard mechanical murah dengan fitur lengkap!\",\n    \"price\": 350000\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/seller/products",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"seller",
+										"products"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": ""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Empty or invalid request\",\n    \"status\": \"error\",\n    \"status_code\": 400\n}"
+						},
+						{
+							"name": "200 - Create Product for Seller",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Keyboard Mechanical\",\n    \"description\": \"Keyboard mechanical murah dengan fitur lengkap!\",\n    \"price\": 350000\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/seller/products",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"seller",
+										"products"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": ""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"id\": 4,\n        \"name\": \"kursi Gaming\",\n        \"description\": \"Kursi nyaman dengan design gaming\",\n        \"price\": 900000,\n        \"seller_id\": \"5b4f572c-b61a-446a-a1e9-81f4e362d3c3\"\n    },\n    \"status\": \"success\",\n    \"status_code\": 200\n}"
+						}
+					]
+				},
+				{
+					"name": "Login for Seller",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"testseller@email.com\",\n    \"password\": \"1234seller\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/seller/login",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"seller",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 - Login for Seller",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"testseller@email.com\",\n    \"password\": \"1234seller\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/seller/login",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"seller",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": ""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"email\": \"testseller@email.com\",\n        \"name\": \"Jack\",\n        \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTg0NzY2NjMsImlhdCI6MTcxNTg4NDY2MywibmFtZSI6IkphY2siLCJyb2xlIjoiU2VsbGVyIiwidXNlcl9pZCI6IjViNGY1NzJjLWI2MWEtNDQ2YS1hMWU5LTgxZjRlMzYyZDNjMyJ9.l1yKsBLCyqzkr4fL3GX49eH3qPD0jCynbgp2oXqTR5M\"\n    },\n    \"status\": \"success\",\n    \"status_code\": 200\n}"
+						},
+						{
+							"name": "400 - Login for Seller",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"test\",\n    \"password\": \"test1234\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/seller/login",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"seller",
+										"login"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": ""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Empty or invalid request\",\n    \"status\": \"error\",\n    \"status_code\": 400\n}"
+						},
+						{
+							"name": "404 - Login for Seller",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"notfound@email.com\",\n    \"password\": \"test1234\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/seller/login",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"seller",
+										"login"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": ""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Buyer not found\",\n    \"status\": \"error\",\n    \"status_code\": 404\n}"
+						}
+					]
+				}
+			]
+		}
+	]
+}

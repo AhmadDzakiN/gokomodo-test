@@ -146,6 +146,13 @@ func (b *BuyerService) CreateOrder(ctx *gin.Context) {
 		return
 	}
 
+	ogTotalPrice := uint64(request.Quantity) * product.Price
+	if uint64(request.Quantity)*request.Price != ogTotalPrice || request.TotalPrice != ogTotalPrice {
+		log.Warn().Msg("Total price input is not same with the original total price")
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "status_code": http.StatusBadRequest, "error": "Empty or invalid request"})
+		return
+	}
+
 	tokenClaims, err := jwt.GetTokenClaims(ctx)
 	if err != nil {
 		log.Err(err).Msg("Invalid user token")

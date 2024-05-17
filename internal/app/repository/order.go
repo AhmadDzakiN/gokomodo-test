@@ -18,6 +18,7 @@ type IOrderRepository interface {
 	Accept(ctx *gin.Context, id uint64, sellerID string) (err error)
 	GetList(ctx *gin.Context, params payloads.GetOrderListParams) (orders []entity.Order, err error)
 	Create(ctx *gin.Context, order *entity.Order) (err error)
+	GetByID(ctx *gin.Context, id uint64) (order entity.Order, err error)
 }
 
 func NewOrderRepository(db *gorm.DB) IOrderRepository {
@@ -77,6 +78,16 @@ func (o *OrderRepository) Create(ctx *gin.Context, order *entity.Order) (err err
 
 	if query.RowsAffected < 1 {
 		err = errors.New("Insert operation failed because rows affected is 0")
+		return
+	}
+
+	return
+}
+
+func (o *OrderRepository) GetByID(ctx *gin.Context, id uint64) (order entity.Order, err error) {
+	query := o.db.WithContext(ctx).First(&order, "id = ?", id)
+	if query.Error != nil {
+		err = query.Error
 		return
 	}
 

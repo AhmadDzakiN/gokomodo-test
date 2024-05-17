@@ -276,3 +276,80 @@ func (o *OrderTestSuite) TestAccept() {
 		})
 	}
 }
+
+func (o *OrderTestSuite) TestGetByID() {
+	type fields struct {
+		mock func(id uint64)
+	}
+
+	type args struct {
+		ctx *gin.Context
+		id  uint64
+	}
+
+	query := `SELECT * FROM orders WHERE id = $1 ORDER BY orders.id LIMIT $2`
+
+	tests := []struct {
+		name           string
+		args           args
+		fields         fields
+		expectedResult entity.Order
+		expectedErr    error
+	}{
+		{
+			name: "Success",
+			args: args{
+				ctx: o.ctx,
+				id:  1,
+			},
+			fields: fields{
+				mock: func(id uint64) {
+					o.sqlMock.MatchExpectationsInOrder(false)
+					o.sqlMock.ExpectQuery(query).WithArgs(id, 1).
+						WillReturnRows(o.sqlMock.NewRows([]string{"id", "seller_id", "buyer_id", "source_address", "destination_address", "items", "quantity", "price", "total_price", "status", "created_at", "updated_at"}).
+							AddRow(1, "1", "2", "Depok", "Bekasi", 4, 2, 1000000, 2000000, constant.OrderStatusPending, time.Date(2020, 01, 03, 00, 00, 00, 00, o.loc),
+								time.Date(2020, 01, 03, 00, 00, 00, 00, o.loc)))
+				}},
+			expectedResult: entity.Order{
+				ID:                 1,
+				SellerID:           "1",
+				BuyerID:            "2",
+				SourceAddress:      "Depok",
+				DestinationAddress: "Bekasi",
+				Items:              4,
+				Quantity:           2,
+				Price:              1000000,
+				TotalPrice:         2000000,
+				Status:             constant.OrderStatusPending,
+				CreatedAt:          time.Date(2020, 01, 03, 00, 00, 00, 00, o.loc),
+				UpdatedAt:          time.Date(2020, 01, 03, 00, 00, 00, 00, o.loc),
+			},
+			expectedErr: nil,
+		},
+		{
+			name: "Failed, theres an error in db",
+			args: args{
+				ctx: o.ctx,
+				id:  1,
+			},
+			fields: fields{
+				mock: func(id uint64) {
+					o.sqlMock.MatchExpectationsInOrder(false)
+					o.sqlMock.ExpectQuery(query).WithArgs(id, 1).WillReturnError(gorm.ErrUnsupportedDriver)
+				}},
+			expectedResult: entity.Order{},
+			expectedErr:    gorm.ErrUnsupportedDriver,
+		},
+	}
+
+	for _, test := range tests {
+		o.Suite.Run(test.name, func() {
+			test.fields.mock(test.args.id)
+
+			actualResult, actualErr := o.repositoryMock.GetByID(test.args.ctx, test.args.id)
+
+			assert.Equal(o.T(), test.expectedErr, actualErr)
+			assert.Equal(o.T(), test.expectedResult, actualResult)
+		})
+	}
+}

@@ -48,3 +48,8 @@ type BuyerLoginResponse struct {
 	Name  string `json:"name"`
 	Token string `json:"token"`
 }
+
+type AcceptOrderResponse struct {
+	ID    uint64 `json:"id"`
+	Items uint64 `json:"items"`
+}
