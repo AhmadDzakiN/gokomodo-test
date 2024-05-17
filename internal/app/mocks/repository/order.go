@@ -69,6 +69,21 @@ func (mr *MockIOrderRepositoryMockRecorder) Create(ctx, order any) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockIOrderRepository)(nil).Create), ctx, order)
 }
 
+// GetByID mocks base method.
+func (m *MockIOrderRepository) GetByID(ctx *gin.Context, id uint64) (entity.Order, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByID", ctx, id)
+	ret0, _ := ret[0].(entity.Order)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByID indicates an expected call of GetByID.
+func (mr *MockIOrderRepositoryMockRecorder) GetByID(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockIOrderRepository)(nil).GetByID), ctx, id)
+}
+
 // GetList mocks base method.
 func (m *MockIOrderRepository) GetList(ctx *gin.Context, params payloads.GetOrderListParams) ([]entity.Order, error) {
 	m.ctrl.T.Helper()

@@ -50,7 +50,7 @@ func (o *OrderTestSuite) TestGetList() {
 		params payloads.GetOrderListParams
 	}
 
-	query := `SELECT o.id, o.buyer_id, o.seller_id, o.source_address, o.destination_address,o.items, o.quantity, o.price, o.total_price, o.status 
+	query := `SELECT o.id, o.buyer_id, o.seller_id, o.source_address, o.destination_address,o.items, o.quantity, o.price, o.total_price, o.status, o.updated_at
 FROM orders o WHERE %s AND o.updated_at > $2 LIMIT $3`
 
 	tests := []struct {
@@ -76,8 +76,9 @@ FROM orders o WHERE %s AND o.updated_at > $2 LIMIT $3`
 					updatedQuery := fmt.Sprintf(query, "o.buyer_id = $1")
 					o.sqlMock.MatchExpectationsInOrder(false)
 					o.sqlMock.ExpectQuery(updatedQuery).WithArgs(sellerID, time.Unix(int64(updatedAt), 0), limit).
-						WillReturnRows(o.sqlMock.NewRows([]string{"id", "seller_id", "buyer_id", "source_address", "destination_address", "items", "quantity", "price", "total_price", "status"}).
-							AddRow(1, "1", "2", "Depok", "Bekasi", 4, 2, 1000000, 2000000, constant.OrderStatusPending))
+						WillReturnRows(o.sqlMock.NewRows([]string{"id", "seller_id", "buyer_id", "source_address", "destination_address", "items", "quantity", "price", "total_price", "status", "updated_at"}).
+							AddRow(1, "1", "2", "Depok", "Bekasi", 4, 2, 1000000, 2000000, constant.OrderStatusPending,
+								time.Date(2020, 01, 03, 00, 00, 00, 00, o.loc)))
 				},
 			},
 			expectedResult: []entity.Order{
@@ -92,6 +93,7 @@ FROM orders o WHERE %s AND o.updated_at > $2 LIMIT $3`
 					Price:              1000000,
 					TotalPrice:         2000000,
 					Status:             constant.OrderStatusPending,
+					UpdatedAt:          time.Date(2020, 01, 03, 00, 00, 00, 00, o.loc),
 				},
 			},
 			expectedErr: nil,

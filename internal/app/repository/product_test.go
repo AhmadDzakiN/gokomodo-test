@@ -121,7 +121,7 @@ func (p *ProductTestSuite) TestGetList() {
 		params payloads.GetProductListParams
 	}
 
-	query := `SELECT p.id, p.name, p.description, p.price, p.seller_id FROM products p WHERE p.seller_id = $1 AND p.updated_at > $2 LIMIT $3`
+	query := `SELECT p.id, p.name, p.description, p.price, p.seller_id, p.updated_at FROM products p WHERE p.seller_id = $1 AND p.updated_at > $2 LIMIT $3`
 
 	tests := []struct {
 		name           string

@@ -6,6 +6,7 @@ type GetProductListResponse struct {
 	Description string `json:"description"`
 	Price       uint64 `json:"price"`
 	Seller      string `json:"seller"`
+	UpdatedAt   int64  `json:"updated_at"`
 }
 
 type GetOrderListResponse struct {
@@ -19,6 +20,7 @@ type GetOrderListResponse struct {
 	Price              uint64 `json:"price"`
 	TotalPrice         uint64 `json:"total_price"`
 	Status             string `json:"status"`
+	UpdatedAt          int64  `json:"updated_at"`
 }
 
 type CreateOrderResponse struct {

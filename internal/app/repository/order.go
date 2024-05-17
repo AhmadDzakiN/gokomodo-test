@@ -46,7 +46,7 @@ func (o *OrderRepository) Accept(ctx *gin.Context, id uint64, sellerID string) (
 func (o *OrderRepository) GetList(ctx *gin.Context, params payloads.GetOrderListParams) (orders []entity.Order, err error) {
 	query := o.db.WithContext(ctx).Table("orders o").
 		Select("o.id, o.buyer_id, o.seller_id, o.source_address, o.destination_address," +
-			"o.items, o.quantity, o.price, o.total_price, o.status")
+			"o.items, o.quantity, o.price, o.total_price, o.status, o.updated_at")
 
 	if params.UserID != "" && params.Role == constant.SellerRole {
 		query = query.Where("o.seller_id = ?", params.UserID)

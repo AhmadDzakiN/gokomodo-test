@@ -121,6 +121,7 @@ func (s *SellerService) GetProductList(ctx *gin.Context) {
 			Description: product.Description,
 			Price:       product.Price,
 			Seller:      product.SellerID,
+			UpdatedAt:   product.UpdatedAt.Unix(),
 		})
 	}
 
@@ -196,7 +197,7 @@ func (s *SellerService) AcceptOrder(ctx *gin.Context) {
 
 	order, err := s.OrderRepo.GetByID(ctx, orderID)
 	if err != nil {
-		log.Err(err).Msgf("Failed to get order by ID %s", orderID)
+		log.Err(err).Msgf("Failed to get order by ID %d", orderID)
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			ctx.JSON(http.StatusNotFound, gin.H{"status": "error", "status_code": http.StatusNotFound, "error": "Order not found"})
 			return
@@ -264,6 +265,7 @@ func (s *SellerService) GetOrderList(ctx *gin.Context) {
 			Price:              order.Price,
 			TotalPrice:         order.TotalPrice,
 			Status:             order.Status,
+			UpdatedAt:          order.UpdatedAt.Unix(),
 		})
 	}
 

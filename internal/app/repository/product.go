@@ -27,7 +27,7 @@ func NewProductRepository(db *gorm.DB) IProductRepository {
 
 func (p *ProductRepository) GetList(ctx *gin.Context, params payloads.GetProductListParams) (products []entity.Product, err error) {
 	query := p.db.WithContext(ctx).Table("products p").
-		Select("p.id, p.name, p.description, p.price, p.seller_id")
+		Select("p.id, p.name, p.description, p.price, p.seller_id, p.updated_at")
 
 	if params.SellerID != "" {
 		query = query.Where("p.seller_id = ?", params.SellerID)

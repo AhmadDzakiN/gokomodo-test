@@ -113,6 +113,7 @@ func (b *BuyerService) GetProductList(ctx *gin.Context) {
 			Description: product.Description,
 			Price:       product.Price,
 			Seller:      product.SellerID,
+			UpdatedAt:   product.UpdatedAt.Unix(),
 		})
 	}
 
@@ -252,6 +253,7 @@ func (b *BuyerService) GetOrderList(ctx *gin.Context) {
 			Price:              order.Price,
 			TotalPrice:         order.TotalPrice,
 			Status:             order.Status,
+			UpdatedAt:          order.UpdatedAt.Unix(),
 		})
 	}
 

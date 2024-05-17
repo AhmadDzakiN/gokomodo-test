@@ -698,7 +698,7 @@
 					]
 				},
 				{
-					"name": "Create Product for Seller",
+					"name": "Create Product",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -735,7 +735,7 @@
 					},
 					"response": [
 						{
-							"name": "400 - Create Product for Seller",
+							"name": "400 - Create Product",
 							"originalRequest": {
 								"method": "POST",
 								"header": [],
@@ -774,7 +774,7 @@
 							"body": "{\n    \"error\": \"Empty or invalid request\",\n    \"status\": \"error\",\n    \"status_code\": 400\n}"
 						},
 						{
-							"name": "200 - Create Product for Seller",
+							"name": "200 - Create Product",
 							"originalRequest": {
 								"method": "POST",
 								"header": [],
@@ -961,6 +961,24 @@
 					]
 				}
 			]
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/ping",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"ping"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

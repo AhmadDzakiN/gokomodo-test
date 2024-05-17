@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY . .
 
-# To configure your env value, please check your params/.env file
+# To configure your env value, please check your params/.env file and edit it first before creating the app's docker container
 
 COPY params/.env .
 
