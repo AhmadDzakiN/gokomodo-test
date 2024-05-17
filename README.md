@@ -11,7 +11,7 @@ A Toko API by Ahmad Dzaki Naufal for Gokomodo Technical Test
 - Copy file `params/.env.sample` to `params/.env`
 - Modify `params/.env` as your needs
 - Ensure your PostgreSQL database already up
-- You can use database/init.sql file to create all needed tables and seed the data
+- You can use [this init sql](database/init.sql) file to create all needed tables and seed the data
 - Run the project by `go run main.go` or `go build && ./gokomodo-assignment`
 
 ## List of Comamnds

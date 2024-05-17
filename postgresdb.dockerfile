@@ -6,6 +6,6 @@ ENV POSTGRES_USER=username-test
 ENV POSTGRES_PASSWORD=password-test
 
 # Comment this line below to disable auto employees table creation & it seed if you want to use migration from the app for employees table
-COPY migrations/seeds/init.sql /docker-entrypoint-initdb.d
+COPY database/init.sql /docker-entrypoint-initdb.d
 
 EXPOSE 5432

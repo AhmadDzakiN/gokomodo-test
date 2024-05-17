@@ -1,4 +1,4 @@
-FROM golang:1.21.10-alpine3.19
+FROM golang:1.21-alpine3.19
 
 RUN apk update && apk add --no-cache git
 
@@ -12,7 +12,9 @@ COPY params/.env .
 
 RUN go mod tidy
 
-RUN go build -o /middle-developer-test
+RUN go build -o /gokomodo-assignment
+
+RUN chmod +x /gokomodo-assignment
 
 EXPOSE 8000
 
